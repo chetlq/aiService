@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements AIListener{
 
     private Timer mTimer1;
     private TimerTask mTt1;
+    private int i=1;
 
 
 
@@ -69,10 +70,13 @@ public class MainActivity extends AppCompatActivity implements AIListener{
                         try {
                             if(!t1.isSpeaking()){
 
-                                aiService.startListening();
-                                Log.i("TAG", "mTimer1 START");
-                            }else{aiService.cancel();
-                                Log.i("TAG", "mTimer1 STOP");}
+                               if(i==0)
+                                   aiService.startListening();
+                               i=1;
+                                Log.i("TAG2", "mTimer1 START");
+                            }else{aiService.stopListening();
+                            i=0;
+                                Log.i("TAG2", "mTimer1 STOP");}
                         }catch (Exception e){}
 
                     }
@@ -246,29 +250,32 @@ public class MainActivity extends AppCompatActivity implements AIListener{
                 //resultTextView.setText(error.toString());
             }
         });
+        Log.i("TAG2", "onError!");
 
-
-
+i=0;
     }
 
     @Override
     public void onAudioLevel(float level) {
+        Log.i("TAG2", "onAutoLevel!");
 
     }
 
     @Override
     public void onListeningStarted() {
+        Log.i("TAG2", "onListeningStarted!");
 
     }
 
     @Override
     public void onListeningCanceled() {
-
+        Log.i("TAG2", "onListeningCanceled!");
     }
 
     @Override
     public void onListeningFinished() {
-
+        Log.i("TAG2", "onListeningFinished!");
+        i=0;
     }
 
 
