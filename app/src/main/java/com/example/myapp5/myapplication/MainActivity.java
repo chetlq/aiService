@@ -1,6 +1,7 @@
 package com.example.myapp5.myapplication;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
@@ -37,7 +38,7 @@ import ai.api.model.Result;
 
 public class MainActivity extends AppCompatActivity implements AIListener{
     public static  TextToSpeech t1;
-
+    public TextToSpeech t2;
     private AIService aiService;
 
     private ImageButton listenButton;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements AIListener{
 
     private Timer mTimer1;
     private TimerTask mTt1;
-    private int i=1;
+    private int i=0;
 
 
 
@@ -65,8 +66,10 @@ public class MainActivity extends AppCompatActivity implements AIListener{
         mTimer1 = new Timer();
         mTt1 = new TimerTask() {
             public void run() {
+Log.i("TAG3", "i = "+String.valueOf(i));
                 mTimerHandler1.post(new Runnable() {
                     public void run(){
+//                    Log.i("TAG3", "TAG3_22");
                         try {
                             if(!t1.isSpeaking()){
 
@@ -78,18 +81,42 @@ public class MainActivity extends AppCompatActivity implements AIListener{
                             i=0;
                                 Log.i("TAG2", "mTimer1 STOP");}
                         }catch (Exception e){}
-
+//
                     }
                 });
             }
         };
 
-        mTimer1.schedule(mTt1, 3000, 100);
+        mTimer1.scheduleAtFixedRate(mTt1,3000,100);
+                //schedule(mTt1, 3000, 100);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        System.exit(0);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+
+        listenButton =(ImageButton) findViewById(R.id.btnSpeak);
+
+
+        resultTextView =  (TextView) findViewById(R.id.txtSpeechInput);
+        startTimer();
         t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -120,38 +147,12 @@ public class MainActivity extends AppCompatActivity implements AIListener{
             }
 
         });
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
-
-
-        listenButton =(ImageButton) findViewById(R.id.btnSpeak);
-
-
-        resultTextView =  (TextView) findViewById(R.id.txtSpeechInput);
-        startTimer();
-
-
-//        final Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                // Do something after 5s = 5000ms
-//                ;
-//            }
-//        }, 5000);
-
         final AIConfiguration config = new AIConfiguration("043275d5428249b99d867c94f1ff410c",
                 AIConfiguration.SupportedLanguages.Russian,
                 AIConfiguration.RecognitionEngine.System);
         aiService = AIService.getService(this, config);
         aiService.setListener(this);
-        aiService.startListening();
+        //aiService.startListening();
         listenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,12 +245,12 @@ public class MainActivity extends AppCompatActivity implements AIListener{
 
     @Override
     public void onError(final AIError error) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //resultTextView.setText(error.toString());
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                //resultTextView.setText(error.toString());
+//            }
+//        });
         Log.i("TAG2", "onError!");
 
 i=0;
